@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>2. Le componenti - Wi-Fi Zone Oratorio Pandino</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet" type="text/css"/>
+<link href="../css/theme.css" rel="stylesheet" type="text/css">
+<link href="../css/theme_extra.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "2. Le componenti";
+    var mkdocs_page_input_path = "comp.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/YAML.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Django.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></link><link href="comp.pdf" rel="alternate" title="PDF Export" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Wi-Fi Zone Oratorio Pandino</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1">
+<a class="" href="../intro/">1. Introduzone</a>
+</li>
+<li class="toctree-l1 current">
+<a class="current" href="./">2. Le componenti</a>
+<ul class="subnav">
+<li class="toctree-l2"><a href="#21-openwisp">2.1 OpenWisp</a></li>
+<li class="toctree-l2"><a href="#22-openwrt">2.2 OpenWRT</a></li>
+<li class="toctree-l2"><a href="#23-freeradius">2.3 FreeRADIUS</a></li>
+<li class="toctree-l2"><a href="#24-django-freeradius">2.4 Django-Freeradius</a></li>
+<li class="toctree-l2"><a href="#25-coovachilli">2.5 CoovaChilli</a></li>
+</ul>
+</li>
+<li class="toctree-l1">
+<a class="" href="../howto/">3. How to</a>
+</li>
+</ul>
+</div>
+       
+    </nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Wi-Fi Zone Oratorio Pandino</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>2. Le componenti</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1>Le componenti</h1>
+<p><img alt="" src="../img/sintesi-tecnologie.jpg"/>
+Per far fronte a tutte le nostre esigenze in modo scalabile, versatile, e sicuro è stato scelto <strong>pfSense</strong> per garantire la sicurezza e gestire i <em>DNS</em> (tramite <strong>BIND9</strong>) così da avere per ogni servizio gli <em>FQDN</em> (talvolta obbligatoriamente) adeguati e <strong>oVirt</strong> come sistema di virtualizzazione per poterci installare tutte le <em>VM</em> necessarie.</p>
+<p><img src="../img/oVirt1.png" width="48%"/> <img src="../img/oVirt2.png" width="48%"/></p>
+<h2 id="21-openwisp">2.1 OpenWisp</h2>
+<p>OpenWISP è un progetto nato per permettere una semplice gestione di rete e permettere l’automazione sotto diversi aspetti come:</p>
+<ul>
+<li>Auto configurazione dei nodi</li>
+<li>Creazione di tunnel VPN</li>
+<li>Inizializzazione di access point WiFi in modo centralizzato</li>
+<li>Configurazione di reti mesh</li>
+<li>Configurazione di ogni rete supportata da OpenWRT</li>
+</ul>
+<p>L'applicazione server-side è modulare, estensibile, programmabile e configurabile. I moduli sono sviluppati con Django, un ricco ecosistema di componenti riutilizzabili soprattutto per applicazioni di rete.</p>
+<p>Al momento solo OpenWRT è completamente supportato per uso in produzione, ma in modo sperimentale è disponibile anche il backend per Ubiquiti AirOS. Inoltre, l'engine permette la scrittura di configurazioni personalizzate su tutti gli OS di rete che supportano le configurazioni remote.</p>
+<p>Il sistema è caratterizzato da due parti:</p>
+<p><strong>OpenWISP Controller</strong>, motore che genera configurazioni per router e dispositivi di rete utilizzando Python e NetJSON. La gestione è permessa grazie ad un interfaccia Web che permette la gestione della rete fornendo funzionalità di:</p>
+<ul>
+<li>Registrazione degli apparati automatica</li>
+<li>Mappe geografiche per posizionamento Indoor e Outdoor</li>
+<li>VPN e certificati x509</li>
+<li>Topologia di rete</li>
+<li>RADIUS manager: django-freeradius</li>
+<li>IP &amp; subnet administration: django-ipam</li>
+<li>Sistemi di controllo</li>
+<li>Aggiornamento Firmware</li>
+</ul>
+<p><strong>OpenWRT package</strong>, pacchetto installabile su OpenWRT per permettere la sincronizzazione con il controller</p>
+<h2 id="22-openwrt">2.2 OpenWRT</h2>
+<p>Il progetto OpenWrt è un sistema operativo Linux destinato a dispositivi embedeed. Invece di provare a creare un singolo firmware statico, OpenWrt fornisce un filesystem completamente scrivibile con gestione dei pacchetti. Questo libera dalla selezione e dalla configurazione dell'applicazione fornite dal venditore e consente di personalizzare il dispositivo attraverso l'uso di pacchetti per adattarsi a qualsiasi applicazione.</p>
+<p>Per gli sviluppatori, OpenWrt è il framework per creare un'applicazione senza dover creare un firmware completo al suo interno; per gli utenti ciò significa la possibilità di personalizzazione completa, permettendo di adattarlo secondo le proprie esigenze.</p>
+<p>OpenWRT ad oggi è supportato da oltre 1000 device. Consultando il sito del progetto è possibile verificarne la compatibilità e la procedura per sostituire il firmware stock.</p>
+<h2 id="23-freeradius">2.3 FreeRADIUS</h2>
+<p>FreeRADIUS è la più popolare implementazione open-source del protocollo RADIUS. Permette l’autenticazione, l’autorizzazzione e l’accounting. Nel nostro caso a stretto contatto con django-freeradius autorizzerà la navigazione ad internet dopo essere passati dal nostro captive portal.</p>
+<h2 id="24-django-freeradius">2.4 Django-Freeradius</h2>
+<p>E’ un’interfaccia web per gestire il database FreeRADIUS basata su Django. Necessaria per integrare le funzionalità di FreeRADIUS per poter gestire l’autorizzazione, la post autenticazione e l’accounting tramite API RESTful. Inoltre in questo caso è necessario per permettere la verifica tramite social grazie all’integrazione del modulo django-allauth.</p>
+<h2 id="25-coovachilli">2.5 CoovaChilli</h2>
+<p>CoovaChilli è un controller ricco di funzionalità che fornisce la possibilità di attivare un Captive Portal così da garantire l'accesso tramite protocollo RADIUS o HTTP permettendo l'access provisioning e l'accounting.
+Questo controller è fruibile come package per Openwrt oppure è parte integrante del firmware CoovaAP.
+Questo package sommato a Freeradius e Django-freeradius permetterà di raggiungere il nostro obbiettivo.</p>
+</div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-right" href="../howto/" title="3. How to">Next <span class="icon icon-circle-arrow-right"></span></a>
+<a class="btn btn-neutral" href="../intro/" title="1. Introduzone"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div class="rst-versions" role="note" style="cursor: pointer">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="../intro/" style="color: #fcfcfc;">« Previous</a></span>
+<span style="margin-left: 15px"><a href="../howto/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="../search/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+site_name: Wi-Fi Zone Oratorio Pandino
+plugins:
+    - search
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - YAML
+        - Bash
+        - Django
+
+markdown_extensions:
+  - admonition
+
+nav:
+- 1. Introduzone: intro.md
+- 2. Le componenti: comp.md
+- 3. How to: howto.md

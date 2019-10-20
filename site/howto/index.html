@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>3. How to - Wi-Fi Zone Oratorio Pandino</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet" type="text/css"/>
+<link href="../css/theme.css" rel="stylesheet" type="text/css">
+<link href="../css/theme_extra.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "3. How to";
+    var mkdocs_page_input_path = "howto.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/YAML.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Django.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></link><link href="howto.pdf" rel="alternate" title="PDF Export" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Wi-Fi Zone Oratorio Pandino</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1">
+<a class="" href="../intro/">1. Introduzone</a>
+</li>
+<li class="toctree-l1">
+<a class="" href="../comp/">2. Le componenti</a>
+</li>
+<li class="toctree-l1 current">
+<a class="current" href="./">3. How to</a>
+<ul class="subnav">
+<li class="toctree-l2"><a href="#31-server-dns-bind9">3.1 Server DNS: BIND9</a></li>
+<li class="toctree-l2"><a href="#32-flash-di-openwrt">3.2 Flash di OpenWRT</a></li>
+<li class="toctree-l2"><a href="#33-deploy-openwisp-controller">3.3 Deploy OpenWISP Controller</a></li>
+<li class="toctree-l2"><a href="#34-installazione-django-freeradius">3.4 Installazione django-freeradius</a></li>
+<li class="toctree-l2"><a href="#35-preparazione-del-captive-portal">3.5 Preparazione del Captive Portal</a></li>
+<li class="toctree-l2"><a href="#36-installazione-freeradius-3">3.6 Installazione FreeRADIUS 3</a></li>
+</ul>
+</li>
+</ul>
+</div>
+       
+    </nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Wi-Fi Zone Oratorio Pandino</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>3. How to</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<p>dn<style>
+img[alt=ap1] { max-height:325px; }
+img[alt=ap2] { max-height:325px; }
+img[alt=ap3] { max-height:325px; }
+img[alt=wroam] { max-height:450px; }</p>
+</style>
+<h1 id="31-server-dns-bind9">3.1 Server DNS: BIND9</h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li>Versione pfSense utilizzata durante la configurazione: <strong>2.4.4</strong></li>
+<li>Versione BIND9 installata: <strong>9.12</strong></li>
+<li>Si ringrazia il blog di <a href="https://www.raffaelechiatto.com/installazione-e-configurazione-di-bind-dns-su-pfsense/">RaffaeleChiatto</a> per gli spunti</li>
+</ul>
+</div>
+<ol>
+<li>
+<p>La prima operazione da effettuare è installare il package di BIND9      utilizzando il package manager di pfSense.
+    <img alt="" src="../img/serverDNS/packageManager.jpg"/></p>
+<p><strong>System</strong> -&gt; <strong>Package Manager</strong> quindi selezionare <strong>Bind</strong> e cliccare su <strong>Install</strong></p>
+<p>L’installazione durerà qualche secondo e se tutto è andato a buon fine dovremmo vedere il BIND sotto gli Installed Packages:</p>
+<p><img alt="" src="../img/serverDNS/installedPackage.png"/></p>
+</li>
+<li>
+<p>Prima di procedere alla configurazione del BIND Server bisogna disattivare il <strong>DNS Forwarder</strong> e il <strong>DNS Resolver</strong></p>
+</li>
+<li>Andare quindi nel menu a tendina sotto <strong>Services</strong> e selezionare <strong>DNS Forwarder</strong></li>
+<li>Togliamo la spunta a <strong>Enable DNS forwarder</strong> e cliccare su <strong>Save</strong></li>
+<li>Effettuare la stessa procedura anche con il DNS Resolver</li>
+<li>Ritornare quindi al menù <strong>Services</strong> e cliccare su <strong>BIND DNS Server</strong></li>
+<li>Attivare il BIND spuntando Enable BIND DNS server.</li>
+<li>Selzionare l’interfaccia sulla quale attivare il DNS (di solito la risoluzione DNS interna va attivata sull’interfaccia di LAN)</li>
+<li>Nella sezione <strong>Logging Options</strong> abilitare i logs quindi selezionare l’opzione di <strong>Default</strong> se si vuole avere il log di tutto altrimenti selezionare l’opzione desiderata.</li>
+<li>
+<p>Per quanto riguarda le altre opzioni abilitare solo il forwarding cosi da poter risolvere tutto ciò che non è censito nelle zone interne con dei DNS pubblici.</p>
+<div class="admonition note">
+<p class="admonition-title">NOTA BENE</p>
+<p>separare i DNS con un ; e inserire il ; anche alla fine dei DNS come mostrato nell’immagine sovrastante</p>
+</div>
+</li>
+<li>
+<p>A questo punto cliccare su <strong>Save</strong> per salvare la configurazione</p>
+</li>
+<li>
+<p>Tornare in alto nella pagina di configurazione e cliccare sul link <strong>Views</strong> quindi cliccare sul pulsante <strong>Add</strong></p>
+<div class="admonition note">
+<p class="admonition-title">NOTA BENE</p>
+<p>la sezione ACLs è stata saltata perchè è una sezione che permette di fare configurazioni avanzate bloccando la risoluzione DNS solo a determinati IP o subnet.</p>
+</div>
+</li>
+<li>
+<p>Dare un nome alla Vista e una descrizione.</p>
+</li>
+<li>
+<p>Settare la <strong>Recursion</strong> a <strong>Yes</strong></p>
+<div class="admonition note">
+<p class="admonition-title">NOTA BENE</p>
+<p>Una query ricorsiva si verifica quando il tuo server DNS viene interrogato per un dominio di cui attualmente non sa nulla, nel qual caso proverà a risolvere l’host dato eseguendo ulteriori query (ad es. Iniziando dai root server e risolvendo, o semplicemente passare la richiesta a un altro server DNS).</p>
+</div>
+</li>
+<li>
+<p>Impostare su <strong>match-clients</strong> e su <strong>allow-recursion any</strong> come mostrato in figura sovrastante.</p>
+</li>
+<li>Cliccare su <strong>Save</strong> per salvare le modifiche.</li>
+<li>Tornare in alto nella pagina di configurazione e cliccare sul <strong>link Views</strong> quindi cliccare sul pulsante <strong>Add</strong></li>
+<li>Inserire il nome della zona interna e la descrizione</li>
+<li>Come <strong>Zone Type</strong> impostare <strong>Master</strong></li>
+<li>Nel campo <strong>View</strong> selezionare <strong>InsideView</strong> creato in precedenza</li>
+<li>Passare alla sezione <strong>Zone Domain records</strong> quindi inseriamo tutti i record che vogliamo risolvere dalla nostra zona interna definita in precedenza</li>
+<li>Inserire nome e IP</li>
+<li>Andare al fondo della pagina verificare il file di configurazione quindi cliccare su <strong>Save</strong> per salvare le impostazioni</li>
+<li>A questo punto la configurazione del server BIND è terminata</li>
+<li>Andiamo nel menù <strong>Status -&gt; Services</strong></li>
+<li>Riavviamo il servizio <strong>named</strong> cliccando sul tasto a forma di <strong>freccia circolare</strong></li>
+</ol>
+<p>!!! Attenzione!
+    Per tutti i passaggi successivi assicurarsi che la risoluzione dei nomi avvenga correttamente su tutti gli host</p>
+<h1 id="32-flash-di-openwrt">3.2 Flash di OpenWRT</h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>la nostra rete è caratterizzata da 5 Access Point Cisco Meraki MR18. <a href="https://openwrt.org/toh/meraki/mr18">Come da documentazione ufficiale,</a> esistono in base alla versione firmware installata 3 metodi per il flashing di seguito esplicito il metodo C in quanto è il nostro caso.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Requisiti</p>
+<ul>
+<li>Router oppure DHCP Server</li>
+<li>Web server</li>
+<li>Adattatore UART</li>
+</ul>
+</div>
+<ol>
+<li>
+<p>Collegamento adattatore UART al Meraki MR18.</p>
+<p><img alt="ap1" src="../img/openwrt/ap1.png"/> <img alt="ap2" src="../img/openwrt/ap2.png"/> <img alt="ap3" src="../img/openwrt/ap3.png"/></p>
+</li>
+<li>
+<p>Collegare all' MR18 a un router (con DHCP attivo) tenendolo scollegato Internet. Questo è fondamentale per questo exploit.</p>
+</li>
+<li>Tenere premuto il pulsante di reset sul MR18 per 10 secondi. Si dovrebbe vedere il led lampeggiare e poi spegnere. Una volta spento il LED, è possibile interrompere la pressione sul pulsante di reset. In questo modo viene eseguito un ripristino di "Livello 2" e vengono rimosse tutte le configurazioni dal punto di accesso.</li>
+<li>Collegare l'adattatore UART dall' MR18 al PC</li>
+<li>Collegare il PC allo stesso router utilizzato da MR18. Quindi, ricordare l'indirizzo IP asseganto al PC. In questo esempio verrà usato 192.168.1.102.</li>
+<li>Una volta avviato l' MR18, avviare un server HTTP (sulla porta 80) sul PC nella stessa directory del file del firmware.</li>
+<li>
+<p>Avviare putty (su windows) oppure un accesso seriale utilizzando l’adattatore. Una volta fatto l’accesso, è possibile caricare questa immagine nella partizione "part2" sul MR18. Questa operazione viene eseguita digitando il seguente comando:</p>
+<p><code>odm firmware part2 192.168.1.102:80/lede-ar71xx-nand-mr18-initramfs-kernel.bin</code></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Si noti che il comando precedente potrebbe andare in timeout, a seconda dello stato del router durante il processo di avvio. Se si verifica il timeout o non riesce, è sufficiente attendere 60 secondi e riprovare. Normalmente il momento migliore per eseguire il comando è quando il LED sul MR18 è verde o lampeggiante arancione.</p>
+</div>
+</li>
+<li>
+<p>Una volta completato, rimuovere l'alimentazione dal Meraki MR18. Dopo che l'alimentazione viene rimossa, nella sessione UART tenere premuto "2" sulla tastiera fino a quando non viene rimessa l'alimentazione. Questo dovrebbe ora avviare l'immagine initramfs appena caricata sul MR18.</p>
+</li>
+<li>Scollegare il MR18 dal router e collegare direttamente il computer ad esso. Una volta collegato, si dovrebbe ottenere un IP dal MR18.</li>
+<li>Ora che il firmware è stato caricato, aprire un browser sul computer e passare a http://192.168.1.1. Una volta effettuato l'accesso a LuCI, è possibile caricare una versione più aggiornata del firmware scaricandola dal sito ufficiale.</li>
+<li>Una volta caricato, il MR18 dovrebbe riavviarsi ed essere completamente in esecuzione OpenWrt/LEDE</li>
+</ol>
+<h3>Installazione pacchetti e configurazioni aggiuntive</h3>
+<p>Per abilitare l'HTTPS sull'interfaccia web:</p>
+<pre><code class="bash">opkg install luci-ssl
+</code></pre>
+<p>Installazione Coovachilli (per attivare il captive portal)</p>
+<pre><code class="bash">opkg install coova-chilli
+</code></pre>
+<p>Rimozione wpad-mini e Installazione di per abilitare il protocollo 802.11r</p>
+<pre><code class="bash">opkg remove wpad-mini
+opkg install wpad
+</code></pre>
+<p><img alt="wroam" src="../img/openwrt/wirelessRoaming.png"/></p>
+<ul>
+<li>Settaggio indirizzo ip</li>
+<li>Settaggio hostname con il relativo inserimento nella zona DNS</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Progetti tuttora in sviluppo</p>
+<p>Per le componenti elencate nei prossimi 3 paragrafi considerando che la comunità di OpenWisp allo stato attuale (a parte il controller) sono ancora in via sviluppo è stato deciso di separarli installando ogni componente in una VM separata (Ubuntu Server 18.04.3)</p>
+</div>
+<h1 id="33-deploy-openwisp-controller">3.3 Deploy OpenWISP Controller</h1>
+<div class="admonition documentazione e materiale ufficiale">
+<p class="admonition-title">Documentazione</p>
+<ul>
+<li><a href="https://openwrt.org/toh/meraki/mr18">Sito ufficiale</a></li>
+<li><a href="https://github.com/openwisp/ansible-openwisp2">GitHub - OpenWisp Controller (ansible)</a></li>
+<li><a href="https://github.com/openwisp/openwisp-config">GitHub - OpenWisp Package</a></li>
+<li><a href="https://github.com/openwisp/">Elenco progetti OpenWisp</a></li>
+</ul>
+</div>
+<p>Per agevolare l'installazione del controller in produzione la comunità di OpenWisp ha deciso di utilizzare ansible, un software libero che consente di automatizzare le procedure di configurazione e gestione sui sistemi unix-like e Windows.</p>
+<p>Per l'installazione tramite ansible è necessario definire due concetti chiave:</p>
+<ul>
+<li>"Server di produzione": Nel nostro caso la VM con Ubuntu Server 18.04, 192.168.3.100, openwisp.planet.bn</li>
+<li>"Macchina locale": ci si riferisce all'host che verrà utilizzato per inviare l'installazione e le configurazioni al server di produzione</li>
+</ul>
+<p>Ansible è uno strumento di gestione della configurazione che funziona collegandosi ai server di produzione tramite SSH, quindi è necessario installarlo e configurarlo sulla computer che abbiamo definito "Machina locale":</p>
+<pre><code class="bash">
+# Installazione di ansible
+    sudo apt update
+    sudo apt install git
+    sudo apt install software-properties-common
+    sudo apt-add-repository --yes --update ppa:ansible/ansible
+    sudo apt install ansible
+
+# Installazione in ansible i ruoli per poter effettuare la installazione
+    ansible-galaxy install openwisp.openwisp2
+
+# Creo una cartella per poi inserire i file di configurazione
+    mkdir ~/openwisp
+    cd ~/openwisp
+    touch playbook.yml
+    touch hosts
+
+# Creazione della chiave per autenticarsi al server di produzione senza password
+       ssh-keygen
+       ssh-copy-id &lt;user&gt;@&lt;FQDN&gt;
+
+# Eseguire Ansible per iniziare l'installazione.
+# Sostituire &lt;user&gt; con l’utente in uso sulla macchina di produzione
+# a cui gli si chiederà di installare il controller
+       ansible-playbook -i hosts playbook.yml -u &lt;user&gt; -k --become -K
+
+</code></pre>
+<pre><code class="yaml"># playbook.yml
+
+- hosts: openwisp.planet.bn
+  become: "{{ become | default('yes') }}"
+  roles:
+    - openwisp.openwisp2
+  vars:
+    openwisp2_network_topology: true
+    openwisp2_default_from_email: bunkernet@oratoriopandino.it
+</code></pre>
+<pre><code class="bash"># hosts
+
+[openwisp2]
+openwisp.planet.bn
+</code></pre>
+<p>Accedere infine alla web gui e cambiare la password di default (admin - admin). Recuperare poi il codice organizzazione e completare i campi vuoti (necessario per i prossimi passaggi,
+    <code>Home › Users and Organizations › Organizations)</code>
+    )</p>
+<h3>Preparazione Access Point per la connessione</h3>
+<p>Per cmpletare la sincronizzazione è necessario accedere via SSH ad ogni Access Point che si desidera collegare.</p>
+<ol>
+<li>
+<p>Installare il seguente pacchetto
+    <code>opkg install http://downloads.openwisp.io/openwisp-config/latest/openwisp-config-nossl_0.4.6a-1_all.ipk</code></p>
+</li>
+<li>
+<p>Modificare il file <em>/etc/config/openwisp</em></p>
+</li>
+</ol>
+<pre><code class="no-highlight">config controller 'http'
+option url 'https://openwisp.planet.bn'
+option shared_secret ‘’
+option verify_ssl '0'
+option mac_interface 'eth0'
+option uuid ''
+option key ''
+</code></pre>
+<p>Tale configurazione indica i parametri di connessione al controller che per poter rimanere autenticato deve ricevere tali configurazioni:</p>
+<ul>
+<li><strong>url</strong>: FQDN del controller</li>
+<li><strong>shared_secret</strong>: chiave del controller</li>
+<li><strong>verify_ssl</strong>: 1 se è presente un certificato firmato, 0 se il certificato è self-signed</li>
+<li><strong>mac_interface</strong>: nome dell’interfaccia dell’AP da cui lo script registrazione preleverà il mac address che verrà utilizzato per generare automaticamente le chiavi univoche uuid,key</li>
+</ul>
+<p>Infine, aprire due shell e inserire rispettivamente</p>
+<pre><code class="bash"># Per monitorare se la registrazione al controller avviene correttamente:
+    logread -f | grep openwisp
+
+# Per avviare il demone di OpenWISP:
+    /etc/init.d/openwisp_config start
+</code></pre>
+<h1 id="34-installazione-django-freeradius">3.4 Installazione django-freeradius</h1>
+<div class="admonition note">
+<p class="admonition-title">Documentazione ufficiale</p>
+<p><a href="http://django-freeradius.readthedocs.io/">ReadTheDocs</a></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li>Versione di python utilizzata: <strong>3.6.5</strong></li>
+<li>E' verificabile digitando
+<code>python3 --version</code></li>
+</ul>
+</div>
+<p>Con l'avvento di Python3 è diventato fortemente consigliato di fare uso dei Virtual Environment.
+Virtual Environment sta per Ambiente Virtuale, e si tratta di una best practice che ci permette di creare degli spazi indipendenti dal resto del sistema in cui è possibile testare e lavorare con Python e pip.
+La grande popolarità degli Ambienti Virtuali, è dovuta al fatto che ci consentono di lavorare e sperimentare con più progetti contemporaneamente nonostante magari questi utilizzino una versione diversa degli stessi moduli. Inoltre ci permettono di installare moduli con pip senza i privilegi di root, con tutti i vantaggi in termini di sicurezza che questo comporta.</p>
+<p>Di seguito quindi la preparazione di un ambiente virtuale con le relative librerie necessarie.</p>
+<pre><code class="bash">sudo apt install python3-pip
+sudo apt install python3-venv
+sudo apt install sqlite3 libsqlite3-dev
+sudo apt install libmysqlclient-dev
+mkdir environments
+cd environments
+python3 -m venv radius_env
+source radius_env/bin/activate
+(radius_env) bobby@bobby:~/environments$ pip install django
+</code></pre>
+<p>Creato l'ambiente, installato Django, si può procedere all'installazione del database di cui django-freeradius ne farà uso.</p>
+<pre><code class="bash">sudo apt install postgresql
+sudo apt install postgresql-server-dev-10
+sudo -i -u postgres
+createuser -S djangoradius -P
+createdb jradius_db -O djangoradius
+</code></pre>
+<p>Creazione del progetto e installazione librerie necessarie</p>
+<pre><code class="django">django-admin startproject djangoradius
+cd djangoradius
+pip install psycopg2
+pip install https://github.com/openwisp/django-freeradius/tarball/master
+pip install --upgrade http://github.com/openwisp/openwisp-utils/tarball/master
+pip install wheel
+pip install django-allauth
+</code></pre>
+<p>Applicazione delle modifiche e creazione utente superuser</p>
+<pre><code class="django">./manage.py migrate
+./manage.py createsuperuser
+</code></pre>
+<p>Modificare il file settings.py come in seguito:</p>
+<pre><code class="no-highlight">ALLOWED_HOSTS = ['192.168.3.102:8000']
+INSTALLED_APPS = [
+    #OtherApps
+    'django_freeradius',
+    'django_filters',
+]
+DJANGO_FREERADIUS_API_TOKEN = '165f9a790787fc38e5cc12c1640db2300648d9a2'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'jradius_db',
+        'USER': 'djangoradius',
+        'PASSWORD': 'pwddb',
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
+    },
+}
+</code></pre>
+<p>urls.py</p>
+<pre><code class="no-highlight">from django.conf.urls import include
+</code></pre>
+<p>Installato e configurato il necessario, è possibile avviare il server</p>
+<pre><code class="django">python manage.py runserver 192.168.1.56:8000
+</code></pre>
+<h1 id="35-preparazione-del-captive-portal">3.5 Preparazione del Captive Portal</h1>
+<p>Affinchè django-freeradius autorizzi gli utenti a navigare è necessario che comunichi con le rispettive API dei social network e per fare ciò è richiesto che django utilizzi una connessione HTTPS.
+Un qualsiasi progetto django di default utilizza una connessione HTTP, di seguito la procedura per convertirlo in HTTPS (Fonte <a href="https://gist.github.com/claudiosanches/7012524">GitHub</a>)</p>
+<pre><code class="no-highlight">sudo apt install stunnel
+</code></pre>
+<p>Spostarsi nella cartella del progetto in cui risiede il file <code>manage.py</code></p>
+<pre><code class="no-highlight">cd /home/openwisp/djangoRadius/djangoradius
+mkdir stunnel
+cd stunnel
+</code></pre>
+<p>Creare la chiave</p>
+<pre><code class="no-highlight">openssl genrsa 1024 &gt; stunnel.key
+openssl req -new -x509 -nodes -sha1 -days 365 -key stunnel.key &gt; stunnel.cert
+cat stunnel.key stunnel.cert &gt; stunnel.pem
+</code></pre>
+<p>Creare un file di nome  <code>dev_https</code> con contenuto:</p>
+<pre><code class="no-highlight">pid=
+cert = stunnel.pem
+sslVersion = SSLv3
+foreground = yes
+output = stunnel.log
+
+[https]
+accept=8000
+connect=8001
+TIMEOUTclose=1
+</code></pre>
+<p>Ritornare nella cartella del <code>manage.py</code> e creare un file di nome <code>runserver</code> con i permessi di esecuzione</p>
+<pre><code class="no-highlight">stunnel4 stunnel/dev_https &amp;
+python manage.py runserver&amp;
+chmod a+x runserver
+</code></pre>
+<p><strong>Installazione di django-allauth</strong></p>
+<p>Il social login è supportato generando un token temporaneo dopo che l'utente ha effettuato un login corretto, l'utente è poi reindirizzato alla pagina di captive portal con 2 parametri: username e token.
+La pagina di captive portal riconosce questi due parametri e lo username è ovviamente usato per il campo username mentre il token per il campo password.
+Le API REST interne di django-freeradius riconosceranno il token e lo autorizzeranno
+questo tipo di implementazione permette di implementare qualsiasi social login che già supporta il protocollo RADIUS perchè è totalmente trasparente per esso. Di seguito la procedura per integrare il social login:</p>
+<p>Questa procedura prende come esempio l'integrazione con facebook</p>
+<pre><code class="no-highlight">pip install django-allauth
+</code></pre>
+<p>Assicurarsi che il file <code>settings.py</code> sia come il seguente</p>
+<pre><code class="no-highlight">INSTALLED_APPS = [
+    # ... other apps ..
+    # apps needed for social login
+    'rest_framework.authtoken',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # showing facebook as an example
+    # to configure social login with other social networks
+    # refer to the django-allauth documentation
+    'allauth.socialaccount.providers.facebook',
+]
+
+SITE_ID = 1
+
+# showing facebook as an example
+# to configure social login with other social networks
+# refer to the django-allauth documentation
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+        ],
+        'VERIFIED_EMAIL': True,
+    }
+}
+</code></pre>
+<p>Assicurarsi che il file <code>urls.py</code> contenga anche allauth.urls:</p>
+<pre><code class="no-highlight">urlpatterns = [
+    # .. other urls ...
+    url(r'^accounts/', include('allauth.urls')),
+]
+</code></pre>
+<p>Infine come spiegato in <a href="https://www.youtube.com/watch?v=mmHn5XYlgto">questo video</a>, la procedura per abilitare e configurare un account facebook developer e collegarlo a django-freeradius.</p>
+<p><strong>Esempio di Captive Page</strong></p>
+<pre><code class="no-highlight">&lt;a href="https://cportal.planet.bn:8000/accounts/facebook/login/?next=%2Ffreeradius%2Fsocial-login%2F%3Fcp%3Dhttps%3A%2F%2Fcportal.planet.bn%2F%26last%3D"
+   class="button"&gt;Log in with Facebook
+&lt;/a&gt;
+</code></pre>
+<h1 id="36-installazione-freeradius-3">3.6 Installazione FreeRADIUS 3</h1>
+<p>In questa parte viene spiegato come installare e configurare freeradius3 per renderlo funzionante con django-
+freeradius.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul>
+<li>Questa procedura è stata scritta per essere eseguita su Ubuntu 18.04, per altre distribuzioni linux il nome dei package e i percorsi potrebbero variare. Per ulteriori chiarimenti consultare la <a href="http://freeradius.org/documentation/">documentazione ufficiale</a></li>
+</ul>
+</div>
+<p>Prima di tutto, diventare root</p>
+<pre><code class="no-highlight">sudo -s
+</code></pre>
+<p>Installazione pacchetti necessari e configurazione del database (In questo caso, PostgreSQL)</p>
+<pre><code class="no-highlight">apt update
+apt install freeradius freeradius-rest
+apt install freeradius-postgresql
+sudo apt install postgresql
+sudo -i -u postgres
+createuser -S freeradius -P
+createdb radius -O freeradius
+exit
+</code></pre>
+<p><strong>Attivazione moduli necessari</strong></p>
+<p>ln -s /etc/freeradius/mods-available/sql /etc/freeradius/mods-enabled/sql
+ln -s /etc/freeradius/mods-available/rest /etc/freeradius/mods-enabled/rest</p>
+<p><strong>Configurazione del modulo sql</strong></p>
+<p>Una volta configurato correttamente un SQL server è necessario configurare il modulo sql con il driver da utilizzare, il dialect, indirizzo del server, username, password e il nome del database da creare. Quindi accedere al file <code>/etc/freeradius/3.0/mods-available/sql</code> e cercare:</p>
+<pre><code class="no-highlight">driver = "rlm_sql_postgresql"
+dialect = "postgresql"
+# Connection info:
+server = "localhost"
+port = 5432
+login = "&lt;user&gt;"
+password = "&lt;password&gt;"
+radius_db = "radius"
+</code></pre>
+<p><strong>Configurazione del modulo sqlcounter</strong></p>
+<p>Il modulo sqlcounter è usato per forzare il limite di sessione. Accedere al file <code>etc/freeradius/mods-available/3.0/sqlcounter</code> e modificarlo come segue:</p>
+<pre><code class="no-highlight">    # The dailycounter is included by default in the freeradius conf
+    sqlcounter dailycounter {
+        sql_module_instance = sql
+        dialect = ${modules.sql.dialect}
+        counter_name = Daily-Session-Time
+        check_name = Max-Daily-Session
+        reply_name = Session-Timeout
+        key = User-Name
+        reset = daily
+        $INCLUDE ${modconfdir}/sql/counter/${dialect}/${.:instance}.conf
+    }
+    # The noresetcounter is included by default in the freeradius conf
+    sqlcounter noresetcounter {
+        sql_module_instance = sql
+        dialect = ${modules.sql.dialect}
+        counter_name = Max-All-Session-Time
+        check_name = Max-All-Session
+        key = User-Name
+        reset = never
+        $INCLUDE ${modconfdir}/sql/counter/${dialect}/${.:instance}.conf
+    }
+    # The dailybandwidthcounter is added for django-freeradius
+    sqlcounter dailybandwidthcounter {
+        counter_name = Max-Daily-Session-Traffic
+        check_name = Max-Daily-Session-Traffic
+        sql_module_instance = sql
+        key = 'User-Name'
+        reset = daily
+        query = "SELECT SUM(acctinputoctets + acctoutputoctets) \
+        FROM radacct \
+        WHERE UserName='%{${key}}' \
+        AND UNIX_TIMESTAMP(acctstarttime) + acctsessiontime &gt; '%%b'"
+    }
+</code></pre>
+<p>Una volta configurato il file come sopra è necessario attivare il modulo con una procedura particolare in quanto a causa di un bug non è possibile attivare tale modulo come tutti gli altri (es. sql e rest)
+accedere a <code>/etc/freeradius/3.0/radiusd.conf</code> e aggiungere come segue sqlcounter</p>
+<pre><code class="no-highlight">    modules {
+        # ..
+        $INCLUDE mods-enabled
+        $INCLUDE mods-available/sqlcounter
+        # ..
+    }
+</code></pre>
+<p><strong>Configurazione del modulo REST</strong></p>
+<p>modificare <code>/etc/freeradius/3.0/mods-enabled/rest</code> sostituendo <code>&lt;url&gt;</code> con l'url usato dal proprio progetto django</p>
+<pre><code class="no-highlight">    connect_uri = "http://127.0.0.1:8000"
+    authorize {
+        uri = "${..connect_uri}/api/v1/authorize/"
+        method = 'post'
+        body = 'json'
+        data = '{"username": "%{User-Name}", "password": "%{User-Password}"}'
+        tls = ${..tls}
+    }
+    # this section can be left empty
+    authenticate {}
+    post-auth {
+        uri = "${..connect_uri}/api/v1/postauth/"
+        method = 'post'
+        body = 'json'
+        data = '{"username": "%{User-Name}", "password": "%{User-Password}", "reply": "%{reply:Packet-
+        Type}", "called_station_id": "%{Called-Station-ID}", "calling_station_id": "%{Calling-Station-ID}"}'
+        tls = ${..tls}
+    }
+    accounting {
+        uri = "${..connect_uri}/api/v1/accounting/"
+        method = 'post'
+        body = 'json'
+        data = '{"status_type": "%{Acct-Status-Type}", "session_id": "%{Acct-Session-Id}", "unique_id": "%
+        {Acct-Unique-Session-Id}", "username": "%{User-Name}", "realm": "%{Realm}", "nas_ip_address": "%{NAS-IP-
+        Address}", "nas_port_id": "%{NAS-Port}", "nas_port_type": "%{NAS-Port-Type}", "session_time": "%{Acct-
+        Session-Time}", "authentication": "%{Acct-Authentic}", "input_octets": "%{Acct-Input-Octets}",
+        "output_octets": "%{Acct-Output-Octets}", "called_station_id": "%{Called-Station-Id}",
+        "calling_station_id": "%{Calling-Station-Id}", "terminate_cause": "%{Acct-Terminate-Cause}",
+        "service_type": "%{Service-Type}", "framed_protocol": "%{Framed-Protocol}", "framed_ip_address": "%
+        {Framed-IP-Address}"}'
+        tls = ${..tls}
+    }
+</code></pre>
+<p><strong>Configurazione del sito</strong></p>
+<p>Cinfigura le sezioni <code>authorize</code>, <code>authenticate</code> e <code>postauth</code> come segue sostituendo <api_token> con il valore della variabile <a href="https://django-freeradius.readthedocs.io/en/latest/general/api.html#api-token">DJANGO_FREERADIUS_API_TOKEN</a> inserita nel file settings.py
+Aprire quindi <code>/etc/freeradius/sites-enabled/default</code></api_token></p>
+<pre><code class="no-highlight">    api_token_header = "Authorization: Bearer &lt;api_token&gt;"
+    authorize {
+        update control { &amp;REST-HTTP-Header += "${...api_token_header}" }
+        rest
+        sql
+        dailycounter
+        noresetcounter
+        dailybandwidthcounter
+    }
+    # this section can be left empty
+    authenticate {}
+    post-auth {
+        update control { &amp;REST-HTTP-Header += "${...api_token_header}" }
+        rest
+        Post-Auth-Type REJECT {
+            update control { &amp;REST-HTTP-Header += "${....api_token_header}" }
+            rest
+        }
+    }
+    accounting {
+        update control { &amp;REST-HTTP-Header += "${...api_token_header}" }
+        rest
+    }
+</code></pre>
+<p>assicurarsi che nella sezione <code>preacct</code> ci sia <code>acct_unique</code></p>
+<pre><code class="no-highlight">    preacct {
+        # ...
+        acct_unique
+        # ...
+    }
+</code></pre>
+<p>Riavviare freeradius per rendere effettiva la nuova configurazione</p>
+<pre><code class="no-highlight">    service freeradius restart
+    # oppure
+    systemctl restart freeradius
+</code></pre>
+<p>In caso di errori avvia freeradius in modalità debug.</p>
+<pre><code class="no-highlight">    freeradius -X
+    # oppure
+    freeradius -Xx
+</code></pre>
+</p></div>
+</div>
+<footer>
+<div aria-label="footer navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral" href="../comp/" title="2. Le componenti"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div class="rst-versions" role="note" style="cursor: pointer">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href="../comp/" style="color: #fcfcfc;">« Previous</a></span>
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="../search/main.js"></script>
+</body>
+</html>

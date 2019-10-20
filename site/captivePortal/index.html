@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>captivePortal - Wi-Fi Zone Oratorio Pandino</title>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" rel="stylesheet" type="text/css"/>
+<link href="../css/theme.css" rel="stylesheet" type="text/css">
+<link href="../css/theme_extra.css" rel="stylesheet" type="text/css">
+<link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+    // Current page data
+    var mkdocs_page_name = "captivePortal";
+    var mkdocs_page_input_path = "captivePortal.md";
+    var mkdocs_page_url = null;
+  </script>
+<script defer="" src="../js/jquery-2.1.1.min.js"></script>
+<script defer="" src="../js/modernizr-2.8.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/YAML.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Bash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/Django.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+</link></link><link href="captivePortal.pdf" rel="alternate" title="PDF Export" type="application/pdf"/></head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Wi-Fi Zone Oratorio Pandino</a>
+<div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="main navigation" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1">
+<a class="" href="../intro/">1. Introduzone</a>
+</li>
+<li class="toctree-l1">
+<a class="" href="../comp/">2. Le componenti</a>
+</li>
+<li class="toctree-l1">
+<a class="" href="../howto/">3. How to</a>
+</li>
+</ul>
+</div>
+       
+    </nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="top navigation" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Wi-Fi Zone Oratorio Pandino</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a href="..">Docs</a> »</li>
+<li>captivePortal</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main">
+<div class="section">
+<h1>Social Login</h1>
+<p>La funzionalità di Social login è garantita generando un token temporaneo dopo che l'utente ha effettuato il login tramite Social. Questo tipo di implementazione permette di implementare il social login con un qualsiasi captive portal che supporta il protocollo RADIUS perchè è totalmente trasparente ad esso.</p>
+<p>Installazione di django-allauth:</p>
+<p>pip install django-allauth</p>
+<p>Assicurarsi che il file settings.py e come l'esempio seguente (Sarà spiegato utilizzando facebook come esempio)</p>
+<p>INSTALLED_APPS = [
+    # ... other apps ..
+    # apps needed for social login
+    'rest_framework.authtoken',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # showing facebook as an example
+    # to configure social login with other social networks
+    # refer to the django-allauth documentation
+    'allauth.socialaccount.providers.facebook',
+]</p>
+<p>SITE_ID = 1</p>
+<p>Al file urls.py va aggiunto anche il la seguente linea tra gli url</p>
+<p>urlpatterns = [
+    # .. other urls ...
+    url(r'^accounts/', include('allauth.urls')),
+]</p>
+<p>Facebook supporta sia OAuth2 che il Facebook Connect Javascript SDK.</p>
+<p>Un vantaggio dell'SDK di Javascript potrebbe essere un'esperienza utente più ottimizzata poiché non si esce dal sito. Inoltre, non è necessario preoccuparsi di adattare la finestra di dialogo di accesso a seconda che si stia utilizzando o meno un dispositivo mobile. Tuttavia, fare affidamento su Javascript potrebbe non essere sempre la soluzione migliore.</p>
+<p>The following Facebook settings are available:</p>
+<p>SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile', 'user_friends'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'email',
+            'name',
+            'first_name',
+            'last_name',
+            'verified',
+            'locale',
+            'timezone',
+            'link',
+            'gender',
+            'updated_time',
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.12',
+    }
+}</p>
+<p>METHOD:
+    js_sdk or oauth2. Di default è oauth2.
+SDK_URL:
+    se necessario, è possibile utilizzare un SDK_URL per sovrascrivere il JavaScript Facebook URL SDK (//connect.facebook.net/{locale}/sdk.js) Questo può essere per esempio necessario quando si decide di un plugin di chat clienti.Se SDK_URL contiene una stringa chiamata {locale} vuol dire che la funzione LOCALE_FUNC sarà usata per generare SDK_URL.
+SCOPE:
+    Per impostazione predefinita, l'ambito e-mail è richiesto a seconda che SOCIALACCOUNT_QUERY_EMAIL sia abilitato o meno. Le app che utilizzano autorizzazioni oltre a e-mail, public_profile e user_friends richiedono la revisione da parte di Facebook. Vedi Autorizzazioni con Facebook Login per ulteriori informazioni.
+AUTH_PARAMS:
+    Utilizzare AUTH_PARAMS per passare altri parametri alla chiamata SDK JS FB.login.
+FIELDS:
+    I campi da recuperare dall'API Graph / me /? fields = endpoint. Ad esempio, potresti aggiungere il campo "amici" per catturare gli amici dell'utente che hanno effettuato l'accesso anche alla tua app tramite Facebook (richiede l'ambito "user_friends").
+EXCHANGE_TOKEN:
+    L'SDK JS restituisce un token di breve durata adatto all'uso lato client. Impostare EXCHANGE_TOKEN = True per effettuare una richiesta lato server per l'aggiornamento a un token di lunga durata prima di archiviare nel record SocialToken.
+LOCALE_FUNC:</p>
+<pre><code>The locale for the JS SDK is chosen based on the current active language of the request, taking a best guess. This can be customized using the LOCALE_FUNC setting, which takes either a callable or a path to a callable. This callable must take exactly one argument, the request, and return a valid Facebook locale as a string, e.g. US English:
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'LOCALE_FUNC': lambda request: 'en_US'
+    }
+}
+</code></pre>
+<p>VERIFIED_EMAIL:
+    It is not clear from the Facebook documentation whether or not the fact that the account is verified implies that the e-mail address is verified as well. For example, verification could also be done by phone or credit card. To be on the safe side, the default is to treat e-mail addresses from Facebook as unverified. But, if you feel that is too paranoid, then use this setting to mark them as verified. Due to lack of an official statement from the side of Facebook, attempts have been made to reverse engineer the meaning of the verified flag. Do know that by setting this to True you may be introducing a security risk.
+VERSION:
+    The Facebook Graph API version to use. The default is v2.12.
+App registration (get your key and secret here)
+    A key and secret key can be obtained by creating an app. After registration you will need to make it available to the public. In order to do that your app first has to be reviewed by Facebook.
+Development callback URL
+    Leave your App Domains empty and put http://localhost:8000 in the section labeled Website with Facebook Login. Note that you’ll need to add your site’s actual domain to this section once it goes live.</p>
+<p>Captive page button example</p>
+<p>Following the previous example configuration with facebook, in your captive page you will need an HTML button similar to the ones in the following examples.</p>
+<p><a class="button" href="https://openwisp2.mywifiproject.com/accounts/facebook/login/?next=%2Ffreeradius%2Fsocial-login%2F%3Fcp%3Dhttps%3A%2F%2Fcaptivepage.mywifiproject.com%2F%26last%3D">Log in with Facebook
+</a></p>
+<p>Substitute openwisp2.mywifiproject.com and captivepage.mywifiproject.com with the hostname of your django-freeradius instance and your captive page respectively.</p>
+</div>
+</div>
+<footer>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div class="rst-versions" role="note" style="cursor: pointer">
+<span class="rst-current-version" data-toggle="rst-current-version">
+</span>
+</div>
+<script>var base_url = '..';</script>
+<script defer="" src="../js/theme.js"></script>
+<script defer="" src="../search/main.js"></script>
+</body>
+</html>
